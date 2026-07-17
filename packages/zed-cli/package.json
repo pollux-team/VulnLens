@@ -1,0 +1,23 @@
+{
+  "name": "@vulnlens/zed-cli",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "CLI sidecar for VulnLens Zed extension",
+  "main": "./dist/cli.js",
+  "bin": {
+    "vulnens-cli": "./dist/cli.js"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@vulnlens/engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^7.0.0",
+    "vitest": "^4.1.10"
+  }
+}

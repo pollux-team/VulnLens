@@ -6,3 +6,10 @@ coverage/
 *.vsix
 *.tgz
 .DS_Store
+
+# Rust
+target/
+Cargo.lock
+
+# Zed extension build
+packages/zed/target/
