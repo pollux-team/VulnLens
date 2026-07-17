@@ -7,19 +7,10 @@ import { makeScanIssue } from './port.js'
 export const npmManifestScanner = {
   id: 'npm-manifest',
 
-  /**
-   * @param {{ ecosystems: string[] }} detection
-   */
   supports(detection) {
     return detection.ecosystems.includes('npm')
   },
 
-  /**
-   * @param {{
-   *   manifests?: string[],
-   *   lockfiles?: string[],
-   * }} [ctx]
-   */
   async scan(ctx) {
     const context = ctx ?? {}
     const findings = emptyFindings()
@@ -50,6 +41,7 @@ export const npmManifestScanner = {
               ids: [],
               title: '',
               severity: 'low',
+              score: null,
               summary: null,
               url: null,
               fixedIn: null,

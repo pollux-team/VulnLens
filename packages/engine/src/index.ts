@@ -16,6 +16,11 @@ export {
   makeScanIssue,
 } from './scanners/port.js'
 export {
+  fetchNpmMetadata,
+  queryVulnerabilityScores,
+  checkPackageHealth,
+} from './health/index.js'
+export {
   AdvisoryIdSchema,
   DEFAULT_POLICY,
   DependencyKindSchema,
@@ -41,3 +46,4 @@ export {
   emptyFindings,
   emptyIssues,
 } from './schemas.js'
+

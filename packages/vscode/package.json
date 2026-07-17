@@ -5,10 +5,10 @@
   "version": "0.1.0",
   "publisher": "vulnlens",
   "type": "module",
-  "main": "./dist/extension.js",
+  "main": "./dist/extension.cjs",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "node esbuild.js",
+    "build": "node esbuild.mjs",
     "test": "vitest run",
     "package": "vsce package"
   },
@@ -16,6 +16,7 @@
     "@vulnlens/engine": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^22.20.1",
     "@types/vscode": "^1.90.0",
     "@vscode/vsce": "^3.0.0",
     "esbuild": "^0.28.1",
@@ -37,6 +38,22 @@
       {
         "command": "vulnlens.clearCache",
         "title": "VulnLens: Clear Cache"
+      },
+      {
+        "command": "vulnlens.showFinding",
+        "title": "VulnLens: Show Finding Details"
+      },
+      {
+        "command": "vulnlens.showDeprecation",
+        "title": "VulnLens: Show Deprecation Info"
+      },
+      {
+        "command": "vulnlens.updateDependency",
+        "title": "VulnLens: Update Dependency Version"
+      },
+      {
+        "command": "vulnlens.showVersionHistory",
+        "title": "VulnLens: Show Version History"
       }
     ],
     "configuration": {
@@ -45,7 +62,12 @@
         "vulnlens.minSeverity": {
           "type": "string",
           "default": "moderate",
-          "enum": ["low", "moderate", "high", "critical"],
+          "enum": [
+            "low",
+            "moderate",
+            "high",
+            "critical"
+          ],
           "description": "Minimum severity level to display"
         },
         "vulnlens.autoScanOnOpen": {

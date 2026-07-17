@@ -2,8 +2,6 @@ import { readFile } from 'node:fs/promises'
 
 import * as jsonc from 'jsonc-parser'
 
-import { mutableList } from '../schemas.js'
-
 const DEPENDENCY_SECTIONS = [
   'dependencies',
   'devDependencies',
@@ -11,9 +9,6 @@ const DEPENDENCY_SECTIONS = [
   'peerDependencies',
 ]
 
-/**
- * @param {unknown} version
- */
 export function cleanVersion(version) {
   return String(version ?? '')
     .replace(/^[\^~>=<]*/, '')
@@ -21,10 +16,6 @@ export function cleanVersion(version) {
     .trim()
 }
 
-/**
- * @param {string} content
- * @param {number} offset
- */
 export function offsetToLineChar(content, offset) {
   const line = content.slice(0, offset).split('\n').length - 1
   const lineStart = content.lastIndexOf('\n', offset - 1) + 1
@@ -34,10 +25,6 @@ export function offsetToLineChar(content, offset) {
   }
 }
 
-/**
- * Parse package.json / JSONC and return dependency packages with locators.
- * @param {string} manifestPath
- */
 export async function parseNpmManifest(manifestPath) {
   let content
   try {
@@ -47,8 +34,7 @@ export async function parseNpmManifest(manifestPath) {
     return { ok: false, error: message, packages: [] }
   }
 
-  const errors = mutableList()
-  // jsonc-parser mutates errors with ParseError objects
+  const errors: any[] = []
   const root = jsonc.parseTree(content, errors)
   if (errors.length > 0 || !root) {
     return {
@@ -58,7 +44,7 @@ export async function parseNpmManifest(manifestPath) {
     }
   }
 
-  const packages = mutableList()
+  const packages: { name: string; version: string; range: string; section: string; line: number; charStart: number; charEnd: number }[] = []
 
   for (const section of DEPENDENCY_SECTIONS) {
     const node = jsonc.findNodeAtLocation(root, [section])

@@ -4,7 +4,7 @@ export function updateStatusBar(statusBarItem, result) {
   }
 
   const { bySeverity, findingCount } = result.stats
-  const parts = []
+  const parts: string[] = []
 
   if (bySeverity.critical > 0) parts.push(`${bySeverity.critical} critical`)
   if (bySeverity.high > 0) parts.push(`${bySeverity.high} high`)

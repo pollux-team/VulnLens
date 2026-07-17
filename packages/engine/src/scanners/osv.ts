@@ -5,7 +5,6 @@ import {
   FindingSchema,
   emptyFindings,
   emptyIssues,
-  mutableList,
 } from '../schemas.js'
 import { normalizeSeverity } from '../severity.js'
 import { parseNpmManifest } from './parse-npm-manifest.js'
@@ -20,15 +19,6 @@ export const osvScanner = {
     return true
   },
 
-  /**
-   * @param {{
-   *   manifests?: string[],
-   *   lockfiles?: string[],
-   *   policy?: { allowNetwork?: boolean, timeoutMs?: number },
-   *   signal?: AbortSignal | null,
-   *   fetchImpl?: typeof fetch | null,
-   * }} [ctx]
-   */
   async scan(ctx) {
     const context = ctx ?? {}
     const findings = emptyFindings()
@@ -135,7 +125,7 @@ export const osvScanner = {
           const vulns = data?.vulns ?? []
 
           for (const vuln of vulns) {
-            const severity = extractSeverity(vuln)
+            const { severity, score } = extractSeverity(vuln)
             const fixedIn = extractFixedIn(vuln)
 
             findings.push(
@@ -145,6 +135,7 @@ export const osvScanner = {
                   ids: extractAdvisoryIds(vuln),
                   title: vuln.summary ?? vuln.id ?? 'Unknown vulnerability',
                   severity: normalizeSeverity(severity),
+                  score,
                   summary: vuln.details ?? vuln.summary ?? null,
                   url: vuln.references?.[0]?.url ?? null,
                   fixedIn,
@@ -222,9 +213,6 @@ export const osvScanner = {
   },
 }
 
-/**
- * @param {string} manifestPath
- */
 async function loadPackages(manifestPath) {
   if (!String(manifestPath).endsWith('package.json')) {
     return []
@@ -250,35 +238,28 @@ async function loadPackages(manifestPath) {
   }))
 }
 
-/**
- * @param {any} vuln
- */
 function extractSeverity(vuln) {
   for (const entry of vuln.severity ?? []) {
     const score = String(entry.score ?? '')
     const numbers = [...score.matchAll(/(\d+(?:\.\d+)?)/g)].map((m) =>
       Number.parseFloat(m[1]),
     )
-    // Prefer last number so "CVSS:3.1/8.0" uses 8.0, not 3.1
     if (numbers.length > 0) {
       const cvss = numbers.length > 1 ? numbers[numbers.length - 1] : numbers[0]
-      if (cvss >= 9) return 'critical'
-      if (cvss >= 7) return 'high'
-      if (cvss >= 4) return 'moderate'
-      return 'low'
+      if (cvss >= 9) return { severity: 'critical', score: cvss }
+      if (cvss >= 7) return { severity: 'high', score: cvss }
+      if (cvss >= 4) return { severity: 'moderate', score: cvss }
+      return { severity: 'low', score: cvss }
     }
     if (entry.type === 'medium' || entry.score === 'MEDIUM') {
-      return 'medium'
+      return { severity: 'medium', score: null }
     }
   }
-  return 'moderate'
+  return { severity: 'moderate', score: null }
 }
 
-/**
- * @param {any} vuln
- */
 function extractFixedIn(vuln) {
-  const fixed = mutableList()
+  const fixed: string[] = []
   for (const affected of vuln.affected ?? []) {
     for (const range of affected.ranges ?? []) {
       for (const event of range.events ?? []) {
@@ -291,11 +272,8 @@ function extractFixedIn(vuln) {
   return fixed.length > 0 ? fixed : null
 }
 
-/**
- * @param {any} vuln
- */
 function extractAdvisoryIds(vuln) {
-  const ids = mutableList()
+  const ids: any[] = []
   if (vuln.id) {
     ids.push(AdvisoryIdSchema.parse({ system: 'osv', value: vuln.id }))
   }
@@ -311,9 +289,6 @@ function extractAdvisoryIds(vuln) {
   return ids
 }
 
-/**
- * @param {string} ecosystem
- */
 function mapEcosystem(ecosystem) {
   if (ecosystem === 'npm') return 'npm'
   if (ecosystem === 'pypi') return 'PyPI'

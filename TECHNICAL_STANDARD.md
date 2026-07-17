@@ -26,25 +26,36 @@ This means:
 - No `function foo(a: number): boolean`
 - No `interface` or `type` declarations in `.ts` files under `src/`
 - No `as SomeType` casts
-- No explicit generic type parameters: `Array<string>` → just `[]`
 - No return type annotations on functions
 - No parameter type annotations on functions
 
 **Rely entirely on TypeScript inference.** The compiler knows what the code does — let it figure it out.
 
-**Where types ARE allowed:**
+**Where types ARE allowed (TypeScript 7 exception — empty arrays):**
+
+TypeScript 7 infers `never[]` for empty array literals `[]` with no contextual type. JSDoc `@type` does NOT work in `.ts` files (only `.js`). Therefore, the **only** allowed explicit type annotation is the minimal empty-array declaration:
+
+```ts
+// ALLOWED — TS7 requires this; `[]` alone infers as never[]
+const items: string[] = []
+const kept: any[] = []
+const ids: { system: string; value: string }[] = []
+```
+
+This is the **sole exception**. No other type annotations are permitted in application code.
+
+**Where types ARE allowed (other):**
 
 - `.d.ts` declaration files (third-party shim files you don't own)
 - `tsconfig.json` compiler options
-- JSDoc `@type` tags only when inference genuinely fails (e.g., callback parameters in untyped third-party APIs — document the reason)
 
 **How to verify compliance:**
 
 ```bash
-# ESLint rule: @typescript-eslint/no-explicit-any + no-implicit-any (already part of strict)
-# Custom rule or grep: any file matching `src/**/*.ts` must not contain `:` followed by a type
+# Allowed: `const x: Type[] = []` pattern for empty arrays only
+# Not allowed: function param types, return types, variable types (except empty array init)
 grep -rn ': [A-Z]\|: string\|: number\|: boolean\|: Record\|: Partial\|: Pick\|: Omit\|: Promise\|: Array\|<\(.*\)>' packages/*/src/
-# Returns nothing = compliant
+# Should only match empty-array declarations
 ```
 
 ---

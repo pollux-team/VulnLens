@@ -37,6 +37,7 @@ export const VulnerabilitySchema = z.object({
   ids: z.array(AdvisoryIdSchema),
   title: z.string(),
   severity: SeveritySchema,
+  score: z.number().nullable(),
   summary: z.string().nullable(),
   url: z.string().nullable(),
   fixedIn: z.array(z.string()).nullable(),
@@ -162,11 +163,6 @@ export function emptyFindings() {
 
 export function emptyIssues() {
   return ScanIssueSchema.array().parse([])
-}
-
-/** Mutable list for push-based builders (avoids never[] empty-array inference). */
-export function mutableList() {
-  return /** @type {any[]} */ ([])
 }
 
 export function emptyBySeverity() {

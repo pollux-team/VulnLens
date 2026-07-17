@@ -2,19 +2,14 @@ import { createHash } from 'node:crypto'
 import { readdir, readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 
-import { mutableList } from './schemas.js'
-
-/**
- * @param {string[]} [roots]
- */
-export async function detect(roots) {
+export async function detect(roots = []) {
   const rootList = roots ?? []
-  const packages = mutableList()
+  const packages: { root: string; ecosystems: string[]; manifests: string[]; lockfiles: string[] }[] = []
 
   for (const root of rootList) {
-    const ecosystems = mutableList()
-    const manifests = mutableList()
-    const lockfiles = mutableList()
+    const ecosystems: string[] = []
+    const manifests: string[] = []
+    const lockfiles: string[] = []
 
     try {
       const entries = await readdir(root)
@@ -56,9 +51,6 @@ export async function detect(roots) {
   return { packages }
 }
 
-/**
- * @param {string} filePath
- */
 export async function hashFile(filePath) {
   try {
     const content = await readFile(filePath)

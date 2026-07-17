@@ -11,8 +11,9 @@ const ctx = await esbuild.context({
   sourcemap: !production,
   sourcesContent: false,
   platform: 'node',
-  outfile: 'dist/extension.js',
+  outfile: 'dist/extension.cjs',
   external: ['vscode'],
+  mainFields: ['module', 'main'],
   logLevel: 'info',
 })
 

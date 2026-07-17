@@ -11,7 +11,6 @@ import {
   emptyBySeverity,
   emptyFindings,
   emptyIssues,
-  mutableList,
 } from './schemas.js'
 import { npmManifestScanner } from './scanners/npm.js'
 import { osvScanner } from './scanners/osv.js'
@@ -20,20 +19,6 @@ import { normalizeSeverity } from './severity.js'
 
 const defaultCache = createCacheStore()
 
-/**
- * @param {{
- *   scanners?: Array<{
- *     id: string,
- *     supports: (detection: { ecosystems: string[], root?: string, manifests?: string[], lockfiles?: string[] }) => boolean,
- *     scan: (ctx: object) => Promise<{ findings?: unknown[], issues?: unknown[], scannersUsed?: string[] }>,
- *   }>,
- *   cache?: ReturnType<typeof createCacheStore>,
- *   clock?: () => Date,
- *   runCommand?: unknown,
- *   fetchImpl?: typeof fetch | null,
- *   logger?: { error?: (msg: string) => void } | null,
- * }} [options]
- */
 export function createEngine(...args) {
   const opts = args[0] ?? {}
   const scanners = opts.scanners ?? [npmManifestScanner, osvScanner]
@@ -58,10 +43,10 @@ export function createEngine(...args) {
 
     const issues = emptyIssues()
     let allFindings = emptyFindings()
-    const scannersUsed = mutableList()
+    const scannersUsed: string[] = []
 
     const detection = await detect(roots)
-    const manifestHashes = mutableList()
+    const manifestHashes: string[] = []
     for (const pkg of detection.packages) {
       for (const manifest of pkg.manifests) {
         manifestHashes.push(await hashFile(manifest))
@@ -221,16 +206,6 @@ export function createEngine(...args) {
   }
 }
 
-/**
- * @param {{
- *   roots: string[],
- *   findings: Array<{ vulnerability: { severity: string } }>,
- *   issues: Array<{ code: string }>,
- *   scannersUsed: string[],
- *   clock: () => Date,
- *   cacheHit: boolean,
- * }} args
- */
 function assembleResult(args) {
   const bySeverity = emptyBySeverity()
   for (const finding of args.findings) {
@@ -262,10 +237,6 @@ function assembleResult(args) {
   }
 }
 
-/**
- * @param {unknown[]} findings
- * @param {Array<{ code: string }>} issues
- */
 function resolveStatus(findings, issues) {
   if (issues.length === 0) {
     return 'ok'
