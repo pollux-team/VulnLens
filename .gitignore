@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.vscode-test/
+coverage/
+*.tsbuildinfo
+pnpm-lock.yaml
+.DS_Store

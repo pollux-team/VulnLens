@@ -1,0 +1,11 @@
+{
+  // This is a JSONC file with comments
+  "name": "jsonc-project",
+  "version": "1.0.0",
+  "dependencies": {
+    // Lodash utility library
+    "lodash": "^4.17.19",
+    // Minimist argument parser
+    "minimist": "^1.2.0"
+  }
+}

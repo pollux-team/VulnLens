@@ -1,0 +1,18 @@
+{
+  "name": "@vulnlens/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "CLI adapter stub — reserved for a later phase",
+  "scripts": {
+    "typecheck": "echo 'cli stub: no sources yet'",
+    "build": "echo 'cli stub: no sources yet'",
+    "test": "echo 'cli stub: no tests yet'"
+  },
+  "dependencies": {
+    "@vulnlens/engine": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.0"
+  }
+}

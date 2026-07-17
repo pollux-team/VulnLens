@@ -1,0 +1,17 @@
+{
+  "name": "vulnerable-project",
+  "version": "1.0.0",
+  "dependencies": {
+    "lodash": "^4.17.19",
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "express": "^4.17.1"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  }
+}

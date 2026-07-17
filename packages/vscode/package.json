@@ -1,0 +1,64 @@
+{
+  "name": "@vulnlens/vscode",
+  "displayName": "VulnLens",
+  "description": "Dependency vulnerability scanner for VS Code",
+  "version": "0.1.0",
+  "publisher": "vulnlens",
+  "type": "module",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "node esbuild.js",
+    "test": "vitest run",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "@vulnlens/engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.28.1",
+    "typescript": "^7.0.0",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "vulnlens.scan",
+        "title": "VulnLens: Scan Workspace"
+      },
+      {
+        "command": "vulnlens.clearCache",
+        "title": "VulnLens: Clear Cache"
+      }
+    ],
+    "configuration": {
+      "title": "VulnLens",
+      "properties": {
+        "vulnlens.minSeverity": {
+          "type": "string",
+          "default": "moderate",
+          "enum": ["low", "moderate", "high", "critical"],
+          "description": "Minimum severity level to display"
+        },
+        "vulnlens.autoScanOnOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan when a package.json is opened"
+        },
+        "vulnlens.allowNetwork": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow network requests to OSV API"
+        }
+      }
+    }
+  }
+}
