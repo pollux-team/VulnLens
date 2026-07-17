@@ -3,4 +3,6 @@ dist/
 .vscode-test/
 coverage/
 *.tsbuildinfo
+*.vsix
+*.tgz
 .DS_Store

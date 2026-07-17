@@ -2,6 +2,7 @@
   "name": "@vulnlens/engine",
   "version": "0.1.0",
   "type": "module",
+  "description": "Host-agnostic dependency vulnerability scanner engine",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -10,9 +11,35 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pollux-team/VulnLens",
+    "directory": "packages/engine"
+  },
+  "keywords": [
+    "vulnerability",
+    "security",
+    "dependency",
+    "scanner",
+    "npm",
+    "osv",
+    "cve",
+    "cvss",
+    "audit"
+  ],
+  "author": "Pollux Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "tsc",
+    "prepublishOnly": "tsc",
     "test": "vitest run",
     "test:watch": "vitest"
   },
